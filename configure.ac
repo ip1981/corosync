@@ -16,49 +16,32 @@ AC_CONFIG_HEADER([include/corosync/config.h])
 
 AC_CANONICAL_HOST
 
-AC_LANG([C])
-
-if test "$srcdir" = "."; then
-	AC_MSG_NOTICE([building in place srcdir:$srcdir])
-	AC_DEFINE([BUILDING_IN_PLACE], 1, [building in place])
-else
-	AC_MSG_NOTICE([building out of tree srcdir:$srcdir])
-fi
-
 # Checks for programs.
-
-# check stolen from gnulib/m4/gnu-make.m4
-if ! ${MAKE-make} --version /cannot/make/this >/dev/null 2>&1; then
-	AC_MSG_ERROR([you don't seem to have GNU make; it is required])
-fi
 
 sinclude(coroysync-default.m4)
 
 AC_PROG_CC
-AC_PROG_INSTALL
-AC_PROG_LN_S
-AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_CHECK_PROGS([GROFF], [groff])
-AC_CHECK_PROGS([PKGCONFIG], [pkg-config])
 AC_CHECK_PROGS([AUGTOOL], [augtool])
 AC_CHECK_PROGS([DOT], [dot])
 AC_CHECK_PROGS([DOXYGEN], [doxygen])
-AC_CHECK_PROGS([AWK], [awk])
 
 # Checks for libraries.
 AC_SEARCH_LIBS([dlopen], [dl])
 AC_SEARCH_LIBS([pthread_create], [pthread])
 AC_SEARCH_LIBS([socket], [socket])
 AC_SEARCH_LIBS([sched_getscheduler], [rt])
+
+PKG_CHECK_MODULES([nss],[nss])
 PKG_CHECK_MODULES([LIBQB], [libqb])
+
 AC_CHECK_LIB([qb], [qb_log_thread_priority_set], \
 	     have_qb_log_thread_priority_set="yes", \
 	     have_qb_log_thread_priority_set="no")
 if test "x${have_qb_log_thread_priority_set}" = xyes; then
 	AC_DEFINE_UNQUOTED([HAVE_QB_LOG_THREAD_PRIORITY_SET], 1, [have qb_log_thread_priority_set])
 fi
-PKG_CHECK_MODULES([nss],[nss])
 
 # Checks for header files.
 AC_FUNC_ALLOCA
@@ -121,83 +104,6 @@ AC_CONFIG_FILES([Makefile
 		 conf/Makefile
                  Doxyfile])
 
-### Local business
-
-dnl ===============================================
-dnl Functions / global M4 variables
-dnl ===============================================
-dnl Global list of LIB names
-m4_define([local_soname_list], [])dnl
-
-dnl Upcase parameter
-m4_define([local_upcase], [translit([$*], [a-z], [A-Z])])dnl
-
-dnl M4 macro for include lib/lib$1.soname and subst that
-m4_define([LIB_SONAME_IMPORT],[dnl
-m4_define([local_libname], local_upcase($1)[_SONAME])dnl
-m4_define([local_soname], translit(m4_sinclude(lib/lib$1.verso), [
-], []))dnl
-local_libname="local_soname"dnl
-m4_define([local_soname_list], m4_defn([local_soname_list])[,]local_libname[,]local_upcase($1))dnl
-AC_SUBST(local_libname)dnl
-])dnl
-
-dnl M4 macro for print padspaces (used in LIB_MSG_RESULT). It takes 2 arguments, length of string to pad and desired
-dnl (padded) length
-m4_define([m4_printpadspace],[ifelse(m4_eval([$2 - $1 < 1]),[1],,[ ][m4_printpadspace([$1],m4_eval([$2 - 1]))])])dnl
-
-dnl Show AC_MSG_RESULT for specific libraries
-m4_define([LIB_MSG_RESULT], [ifelse([$#], [1],  ,[dnl
-AC_MSG_RESULT([  $2 Library SONAME m4_printpadspace(len($2),8) = ${$1}])
-LIB_MSG_RESULT(m4_shift(m4_shift($@)))dnl
-])])dnl
-
-# ===============================================
-# Helpers
-# ===============================================
-
-## helper for CC stuff
-cc_supports_flag() {
-	local CPPFLAGS="$CPPFLAGS $@"
-	AC_MSG_CHECKING([whether $CC supports "$@"])
-	AC_PREPROC_IFELSE([AC_LANG_PROGRAM([])],
-			  [RC=0; AC_MSG_RESULT([yes])],
-			  [RC=1; AC_MSG_RESULT([no])])
-	return $RC
-}
-
-## cleanup
-AC_MSG_NOTICE(Sanitizing prefix: ${prefix})
-case $prefix in
-  NONE) prefix=/usr/local;;
-esac
-
-AC_MSG_NOTICE(Sanitizing exec_prefix: ${exec_prefix})
-case $exec_prefix in
-  dnl For consistency with Corosync, map NONE->$prefix
-  NONE)   exec_prefix=$prefix;;
-  prefix) exec_prefix=$prefix;;
-esac
-
-## local defines
-PACKAGE_FEATURES=""
-
-LINT_FLAGS="-weak -unrecog +posixlib +ignoresigns -fcnuse \
-	-badflag -D__gnuc_va_list=va_list -D__attribute\(x\)="
-
-# default libraries SONAME
-SOMAJOR="5"
-SOMINOR="0"
-SOMICRO="0"
-SONAME="${SOMAJOR}.${SOMINOR}.${SOMICRO}"
-
-# specific libraries SONAME
-LIB_SONAME_IMPORT([cfg])
-LIB_SONAME_IMPORT([cpg])
-LIB_SONAME_IMPORT([quorum])
-LIB_SONAME_IMPORT([sam])
-LIB_SONAME_IMPORT([votequorum])
-LIB_SONAME_IMPORT([cmap])
 
 # local options
 AC_ARG_ENABLE([ansi],
@@ -273,31 +179,16 @@ AM_CONDITIONAL(INSTALL_XMLCONF, test x$enable_xmlconf = xyes)
 
 # OS detection
 # THIS SECTION MUST DIE!
-CP=cp
-OS_LDL="-ldl"
-have_linux="no"
+have_linux=no
 case "$host_os" in
 	*linux*)
+        have_linux=yes
 		AC_DEFINE_UNQUOTED([COROSYNC_LINUX], [1],
 				   [Compiling for Linux platform])
-		OS_CFLAGS=""
-		OS_CPPFLAGS="-D_GNU_SOURCE"
-		OS_LDFLAGS=""
-		OS_DYFLAGS="-rdynamic"
-		DARWIN_OPTS=""
-		have_linux="yes"
 	;;
 	darwin*)
 		AC_DEFINE_UNQUOTED([COROSYNC_DARWIN], [1],
 				   [Compiling for Darwin platform])
-		CP=rsync
-		OS_CFLAGS=""
-		OS_CPPFLAGS=""
-		OS_LDFLAGS=""
-		OS_DYFLAGS=""
-		DARWIN_OPTS="-dynamiclib -bind_at_load \
-			     -current_version ${SONAME} \
-			     -compatibility_version ${SONAME} -install_name \$(libdir)/\$(@)"
 		AC_DEFINE_UNQUOTED([MAP_ANONYMOUS], [MAP_ANON],
 				   [Shared memory define for Darwin platform])
 		AC_DEFINE_UNQUOTED([PATH_MAX], [4096],
@@ -310,12 +201,6 @@ case "$host_os" in
 				   [Compiling for BSD platform])
 		AC_DEFINE_UNQUOTED([MAP_ANONYMOUS], [MAP_ANON],
 				   [Shared memory define for Darwin platform])
-		OS_CFLAGS=""
-		OS_CPPFLAGS="-I/usr/local/include"
-		OS_LDFLAGS="-L/usr/local/lib"
-		OS_DYFLAGS="-export-dynamic"
-		DARWIN_OPTS=""
-		OS_LDL=""
 		case "$host_os" in
 			*freebsd[[234567]]*)
 			;;
@@ -332,13 +217,6 @@ case "$host_os" in
 				   [Prevent being scheduled RR])
 		AC_DEFINE_UNQUOTED([_SEM_SEMUN_UNDEFINED], [1],
 				   [The semun structure is undefined])
-		CP=rsync
-		OS_CFLAGS=""
-		OS_CPPFLAGS="-D_REENTRANT"
-		OS_LDFLAGS=""
-		OS_DYFLAGS="-Wl,-z,lazyload"
-		DARWIN_OPTS=""
-		SOLARIS_OPTS=" "
 	;;
 	*)
 		AC_MSG_ERROR([Unsupported OS? hmmmm])
@@ -355,10 +233,7 @@ ENV_LDFLAGS="$LDFLAGS"
 # debug build stuff
 if test "x${enable_debug}" = xyes; then
 	AC_DEFINE_UNQUOTED([DEBUG], [1], [Compiling Debugging code])
-	OPT_CFLAGS="-O0"
 	PACKAGE_FEATURES="$PACKAGE_FEATURES debug"
-else
-	OPT_CFLAGS="-O3"
 fi
 
 # gdb flags
@@ -474,48 +349,6 @@ fi
 AC_SUBST([SNMPLIBS])
 AM_CONDITIONAL(BUILD_SNMP, test "${enable_snmp}" = "1")
 
-# extra warnings
-EXTRA_WARNINGS=""
-
-WARNLIST="
-	all
-	shadow
-	missing-prototypes
-	missing-declarations
-	strict-prototypes
-	declaration-after-statement
-	pointer-arith
-	write-strings
-	cast-align
-	bad-function-cast
-	missing-format-attribute
-	format=2
-	format-security
-	format-nonliteral
-	no-long-long
-	unsigned-char
-	gnu89-inline
-	no-strict-aliasing
-	"
-
-for j in $WARNLIST; do
-	if cc_supports_flag -W$j; then
-		EXTRA_WARNINGS="$EXTRA_WARNINGS -W$j";
-	fi
-done
-
-if test "x${enable_coverage}" = xyes && \
-		cc_supports_flag -ftest-coverage && \
-		cc_supports_flag -fprofile-arcs ; then
-	AC_MSG_NOTICE([Enabling Coverage (enable -O0 by default)])
-	OPT_CFLAGS="-O0"
-	COVERAGE_CFLAGS="-ftest-coverage -fprofile-arcs"
-	COVERAGE_LDFLAGS="-ftest-coverage -fprofile-arcs"
-	PACKAGE_FEATURES="$PACKAGE_FEATURES coverage"
-else
-	COVERAGE_CFLAGS=""
-	COVERAGE_LDFLAGS=""
-fi
 
 
 if test "x${enable_small_memory_footprint}" = xyes ; then
@@ -523,47 +356,9 @@ if test "x${enable_small_memory_footprint}" = xyes ; then
 	PACKAGE_FEATURES="$PACKAGE_FEATURES small-memory-footprint"
 fi
 
-if test "x${enable_ansi}" = xyes && \
-		cc_supports_flag -std=iso9899:199409 ; then
-	AC_MSG_NOTICE([Enabling ANSI Compatibility])
-	ANSI_CPPFLAGS="-ansi -D_GNU_SOURCE -DANSI_ONLY"
-	PACKAGE_FEATURES="$PACKAGE_FEATURES ansi"
-else
-	ANSI_CPPFLAGS=""
-fi
-
-if test "x${enable_fatal_warnings}" = xyes && \
-		cc_supports_flag -Werror ; then
-	AC_MSG_NOTICE([Enabling Fatal Warnings (-Werror)])
-	WERROR_CFLAGS="-Werror"
-	PACKAGE_FEATURES="$PACKAGE_FEATURES fatal-warnings"
-else
-	WERROR_CFLAGS=""
-fi
-
-# don't add addtional cflags
-if test "x${enable_user_flags}" = xyes; then
-  OPT_CFLAGS=""
-  GDB_FLAGS=""
-  EXTRA_WARNINGS=""
-fi
-
-# final build of *FLAGS
-CFLAGS="$ENV_CFLAGS $OPT_CFLAGS $GDB_FLAGS $OS_CFLAGS \
-	$COVERAGE_CFLAGS $EXTRA_WARNINGS $WERROR_CFLAGS $NSS_CFLAGS"
-CPPFLAGS="$ENV_CPPFLAGS $ANSI_CPPFLAGS $OS_CPPFLAGS"
-LDFLAGS="$ENV_LDFLAGS $COVERAGE_LDFLAGS $OS_LDFLAGS"
-
 # substitute what we need:
 AC_SUBST([INITDDIR])
 
-AC_SUBST([SOMAJOR])
-AC_SUBST([SOMINOR])
-AC_SUBST([SOMICRO])
-AC_SUBST([SONAME])
-AC_SUBST([OS_DYFLAGS])
-
-AC_SUBST([OS_LDL])
 AM_CONDITIONAL(INSTALL_TESTAGENTS, test -n "${enable_testagents}")
 AM_CONDITIONAL(INSTALL_MIB, test "${enable_snmp}" = "1")
 AM_CONDITIONAL(INSTALL_DBUSCONF, test "${enable_dbus}" = "1")
@@ -589,40 +384,3 @@ AC_DEFINE_UNQUOTED([PACKAGE_FEATURES], "${PACKAGE_FEATURES}", [corosync built-in
 
 AC_OUTPUT
 
-AC_MSG_RESULT([])
-AC_MSG_RESULT([$PACKAGE configuration:])
-AC_MSG_RESULT([  Version                  = ${VERSION}])
-AC_MSG_RESULT([  Prefix                   = ${prefix}])
-AC_MSG_RESULT([  Executables              = ${sbindir}])
-AC_MSG_RESULT([  Man pages                = ${mandir}])
-AC_MSG_RESULT([  Doc dir                  = ${docdir}])
-AC_MSG_RESULT([  Libraries                = ${libdir}])
-AC_MSG_RESULT([  Header files             = ${includedir}])
-AC_MSG_RESULT([  Arch-independent files   = ${datadir}])
-AC_MSG_RESULT([  State information        = ${localstatedir}])
-AC_MSG_RESULT([  System configuration     = ${sysconfdir}])
-AC_MSG_RESULT([  System init.d directory  = ${INITDDIR}])
-AC_MSG_RESULT([  corosync config dir      = ${COROSYSCONFDIR}])
-AC_MSG_RESULT([  Features                 =${PACKAGE_FEATURES}])
-AC_MSG_RESULT([])
-AC_MSG_RESULT([$PACKAGE build info:])
-AC_MSG_RESULT([  Library SONAME           = ${SONAME}])
-LIB_MSG_RESULT(m4_shift(local_soname_list))dnl
-AC_MSG_RESULT([  Default optimization     = ${OPT_CFLAGS}])
-AC_MSG_RESULT([  Default debug options    = ${GDB_CFLAGS}])
-AC_MSG_RESULT([  Extra compiler warnings  = ${EXTRA_WARNING}])
-AC_MSG_RESULT([  Env. defined CFLAG       = ${ENV_CFLAGS}])
-AC_MSG_RESULT([  Env. defined CPPFLAGS    = ${ENV_CPPFLAGS}])
-AC_MSG_RESULT([  Env. defined LDFLAGS     = ${ENV_LDFLAGS}])
-AC_MSG_RESULT([  OS   defined CFLAGS      = ${OS_CFLAGS}])
-AC_MSG_RESULT([  OS   defined CPPFLAGS    = ${OS_CPPFLAGS}])
-AC_MSG_RESULT([  OS   defined LDFLAGS     = ${OS_LDFLAGS}])
-AC_MSG_RESULT([  OS   defined LDL         = ${OS_LDL}])
-AC_MSG_RESULT([  OS   defined DYFLAGS     = ${OS_DYFLAGS}])
-AC_MSG_RESULT([  ANSI defined CPPFLAGS    = ${ANSI_CPPFLAGS}])
-AC_MSG_RESULT([  Coverage     CFLAGS      = ${COVERAGE_CFLAGS}])
-AC_MSG_RESULT([  Coverage     LDFLAGS     = ${COVERAGE_LDFLAGS}])
-AC_MSG_RESULT([  Fatal War.   CFLAGS      = ${WERROR_CFLAGS}])
-AC_MSG_RESULT([  Final        CFLAGS      = ${CFLAGS}])
-AC_MSG_RESULT([  Final        CPPFLAGS    = ${CPPFLAGS}])
-AC_MSG_RESULT([  Final        LDFLAGS     = ${LDFLAGS}])
