@@ -1,8 +1,8 @@
 SUBDIRS = \
 	include \
 	common_lib \
-	lib
-#	exec \
+	lib \
+	exec
 #	tools \
 #	test \\
 #	cts \
