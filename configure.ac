@@ -17,7 +17,7 @@ AC_CONFIG_SRCDIR([lib/cpg.c])
 AC_CONFIG_HEADER([include/corosync/config.h])
 
 with_sun_ld=no
-if $LD --help 2>&1 | $(GREP) 'M mapfile' > /dev/null; then
+if $LD --help 2>&1 | $GREP 'M mapfile' > /dev/null; then
     with_sun_ld=yes
 fi
 AM_CONDITIONAL([SUNLD], [test $with_sun_ld = yes])
