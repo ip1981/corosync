@@ -3,13 +3,13 @@ SUBDIRS = \
 	common_lib \
 	lib \
 	exec \
-	tools
+	tools \
+	conf
 #	test \\
 #	cts \
 #	pkgconfig \
 #	man \
-#	init \
-#	conf
+#	init
 
 dist_doc_DATA = \
 	README.recovery \
