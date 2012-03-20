@@ -1,27 +1,30 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
-
-# bootstrap / init
 AC_PREREQ([2.61])
 
 AC_INIT([corosync],
 	m4_esyscmd([build-aux/git-version-gen .tarball-version]),
 	[discuss@lists.corosync.org])
 
-AM_INIT_AUTOMAKE([-Wno-portability])
-AM_SILENT_RULES([yes])
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([m4])
+
+
+AM_INIT_AUTOMAKE
+AM_SILENT_RULES
+AC_PROG_CC
+LT_INIT()
 
 AC_CONFIG_SRCDIR([lib/cpg.c])
 AC_CONFIG_HEADER([include/corosync/config.h])
 
-AC_CANONICAL_HOST
-
-# Checks for programs.
+with_sun_ld=no
+if $LD --help 2>&1 | $(GREP) 'M mapfile' > /dev/null; then
+    with_sun_ld=yes
+fi
+AM_CONDITIONAL([SUNLD], [test $with_sun_ld = yes])
+AM_CONDITIONAL([GNULD], [test $with_gnu_ld = yes])
 
 sinclude(coroysync-default.m4)
 
-AC_PROG_CC
-AC_PROG_RANLIB
 AC_CHECK_PROGS([GROFF], [groff])
 AC_CHECK_PROGS([AUGTOOL], [augtool])
 AC_CHECK_PROGS([DOT], [dot])
@@ -106,24 +109,9 @@ AC_CONFIG_FILES([Makefile
 
 
 # local options
-AC_ARG_ENABLE([ansi],
-	[  --enable-ansi                   : force to build with ANSI standards. ],
-	[ default="no" ])
-
-AC_ARG_ENABLE([fatal-warnings],
-	[  --enable-fatal-warnings         : enable fatal warnings. ],
-	[ default="no" ])
 
 AC_ARG_ENABLE([debug],
 	[  --enable-debug                  : enable debug build. ],
-	[ default="no" ])
-
-AC_ARG_ENABLE([user-flags],
-	[  --enable-user-flags             : rely on user environment. ],
-	[ default="no" ])
-
-AC_ARG_ENABLE([coverage],
-	[  --enable-coverage               : coverage analysis of the codebase. ],
 	[ default="no" ])
 
 AC_ARG_ENABLE([small-memory-footprint],

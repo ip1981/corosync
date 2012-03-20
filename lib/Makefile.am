@@ -1,110 +1,52 @@
-#
-# Copyright (c) 2009 Red Hat, Inc.
-#
-# Authors: Andrew Beekhof
-#	   Steven Dake (sdake@redhat.com)
-#
-# This software licensed under BSD license, the text of which follows:
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-# - Redistributions of source code must retain the above copyright notice,
-#   this list of conditions and the following disclaimer.
-# - Redistributions in binary form must reproduce the above copyright notice,
-#   this list of conditions and the following disclaimer in the documentation
-#   and/or other materials provided with the distribution.
-# - Neither the name of the MontaVista Software, Inc. nor the names of its
-#   contributors may be used to endorse or promote products derived from this
-#   software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-# THE POSSIBILITY OF SUCH DAMAGE.
+lib_LTLIBRARIES = libcpg.la libquorum.la libcfg.la libvotequorum.la libsam.la libcmap.la
 
-# Functions
-uc=$(shell echo $1 | tr a-z A-Z)
-get_soname=$(if $($(call uc,$1)_SONAME),$($(call uc,$1)_SONAME),$(SONAME))
-get_major=$(firstword $(subst ., ,$(call get_soname,$1)))
-get_sharedlibs=$(foreach lib,$(SHARED_LIBS_SO:lib%.so=%),lib$(lib).so.$(call get_soname,$(lib)))
-get_sharedlibs_two=$(foreach lib,$(SHARED_LIBS_SO:lib%.so=%),lib$(lib).so.$(call get_major,$(lib)))
-get_linker_add=$(if $($(call uc,$1)_LINKER_ADD),$($(call uc,$1)_LINKER_ADD))
+AM_CPPFLAGS = \
+	-I$(top_builddir)/include \
+	-I$(top_srcdir)/include \
+	$(LIBQB_CFLAGS)
 
-MAINTAINERCLEANFILES    = Makefile.in
+AM_LDFLAGS = -L$(top_builddir)/common_lib
 
-AM_CFLAGS		= -fPIC
+libcfg_la_LIBADD         = $(LIBQB_LIBS) -lcorosync_common
+libcfg_la_SOURCES        = cfg.c util.h libcfg.versions
+libcfg_la_LDFLAGS        = $(AM_LDFLAGS) -version-info 6:0:0
 
-AM_LDFLAGS		= -lpthread -L../common_lib -lcorosync_common
+libcmap_la_LIBADD        = $(LIBQB_LIBS) -lcorosync_common
+libcmap_la_SOURCES       = cmap.c util.h libcmap.versions
+libcmap_la_LDFLAGS       = $(AM_LDFLAGS) -version-info 5:0:1
 
-INCLUDES		= -I$(top_builddir)/include -I$(top_srcdir)/include
+libcpg_la_LIBADD         = $(LIBQB_LIBS) -lcorosync_common
+libcpg_la_SOURCES        = cpg.c util.h libcmap.versions
+libcpg_la_LDFLAGS        = $(AM_LDFLAGS) -version-info 5:0:1
 
-lib_LIBRARIES		= libcpg.a libquorum.a libcfg.a \
-			  libvotequorum.a libsam.a libcmap.a
-SHARED_LIBS_SO		= $(lib_LIBRARIES:%.a=%.so)
+libquorum_la_LIBADD      = $(LIBQB_LIBS) -lcorosync_common
+libquorum_la_SOURCES     = quorum.c util.h libquorum.versions
+libquorum_la_LDFLAGS     = $(AM_LDFLAGS) -version-info 5:0:0
 
-libcpg_a_SOURCES	= cpg.c
-libcfg_a_SOURCES	= cfg.c
-libquorum_a_SOURCES	= quorum.c
-libvotequorum_a_SOURCES	= votequorum.c
-libcmap_a_SOURCES	= cmap.c
-SAM_LINKER_ADD		= -L. -lquorum -lcmap
-libsam_a_SOURCES	= sam.c
+libvotequorum_la_LIBADD  = $(LIBQB_LIBS) -lcorosync_common
+libvotequorum_la_SOURCES = votequorum.c util.h libvotequorum.versions
+libvotequorum_la_LDFLAGS = $(AM_LDFLAGS) -version-info 5:0:0
 
-noinst_HEADERS		= util.h \
-			  libcfg.versions \
-			  libcpg.versions \
-			  libquorum.versions libvotequorum.versions \
-			  libsam.versions libcmap.versions
+libsam_la_LIBADD         = $(LIBQB_LIBS) -lcorosync_common -lcmap -lquorum
+libsam_la_SOURCES        = sam.c util.h libsam.versions
+libsam_la_DEPENDENCIES   = libcmap.la libquorum.la
+libsam_la_LDFLAGS        = -L. $(AM_LDFLAGS) -version-info 8:0:4
 
-if BUILD_DARWIN
 
-lib%.so: lib%.a $(LIBQB_LIBS)
-	$(CC) $(DARWIN_OPTS) $(call get_linker_add,$*) -Wl,-whole-archive $^ -Wl,-no-whole-archive -o $@
-	ln -sf lib$*.so.$(call get_soname,$*) lib$*.so
-	ln -sf lib$*.so.$(call get_soname,$*) lib$*.so.$(call get_major,$*)
-
-else
-
-if BUILD_SOLARIS
-
-lib%.so.$(SONAME): lib%.a
-	$(LD) $(SOLARIS_OPTS) $(call get_linker_add,$*) -G -whole-archive $^ -no-whole-archive -o $@
-	ln -sf lib$*.so.$(call get_soname,$*) lib$*.so
-	ln -sf lib$*.so.$(call get_soname,$*) lib$*.so.$(call get_major,$*)
-
-else
-
-lib%.so: lib%.a
-	$(CC) -shared -o $@.$(call get_soname,$*) \
-		-Wl,-soname=lib$*.so.$(call get_major,$*) \
-		-Wl,-version-script=$(srcdir)/lib$*.versions \
-		-Wl,-whole-archive $^ -Wl,-no-whole-archive $(LDFLAGS) $(LIBQB_LIBS) $(AM_LDFLAGS) $(call get_linker_add,$*)
-	ln -sf lib$*.so.$(call get_soname,$*) lib$*.so
-	ln -sf lib$*.so.$(call get_soname,$*) lib$*.so.$(call get_major,$*)
-
+if GNULD
+libcfg_la_LDFLAGS        += -Wl,--version-script=$(srcdir)/libcfg.versions
+libcmap_la_LDFLAGS       += -Wl,--version-script=$(srcdir)/libcmap.versions
+libcpg_la_LDFLAGS        += -Wl,--version-script=$(srcdir)/libcpg.versions
+libquorum_la_LDFLAGS     += -Wl,--version-script=$(srcdir)/libquorum.versions
+libsam_la_LDFLAGS        += -Wl,--version-script=$(srcdir)/libsam.versions
+libvotequorum_la_LDFLAGS += -Wl,--version-script=$(srcdir)/libvotequorum.versions
+endif
+if SUNLD
+libcfg_la_LDFLAGS        += -Wl,-M -Wl,$(srcdir)/libcfg.versions
+libcmap_la_LDFLAGS       += -Wl,-M -Wl,$(srcdir)/libcmap.versions
+libcpg_la_LDFLAGS        += -Wl,-M -Wl,$(srcdir)/libcpg.versions
+libquorum_la_LDFLAGS     += -Wl,-M -Wl,$(srcdir)/libquorum.versions
+libsam_la_LDFLAGS        += -Wl,-M -Wl,$(srcdir)/libsam.versions
+libvotequorum_la_LDFLAGS += -Wl,-M -Wl,$(srcdir)/libvotequorum.versions
 endif
 
-endif
-
-all-local: $(get_explicit_sharedlibs) $(SHARED_LIBS_SO)
-	@echo Built shared libs
-
-install-exec-local:
-	$(INSTALL) -d $(DESTDIR)/$(libdir)
-	$(INSTALL) -m 755 $(get_sharedlibs) $(DESTDIR)/$(libdir)
-	$(CP) -a $(SHARED_LIBS_SO) $(get_sharedlibs_two) $(DESTDIR)/$(libdir)
-
-uninstall-local:
-	cd $(DESTDIR)/$(libdir)/ && \
-		rm -f $(get_sharedlibs) $(SHARED_LIBS_SO) $(get_sharedlibs_two)
-
-clean-local:
-	rm -f *.o *.a *.so* *.da *.bb *.bbg
