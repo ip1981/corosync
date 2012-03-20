@@ -2,8 +2,8 @@ SUBDIRS = \
 	include \
 	common_lib \
 	lib \
-	exec
-#	tools \
+	exec \
+	tools
 #	test \\
 #	cts \
 #	pkgconfig \

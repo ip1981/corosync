@@ -1,80 +1,54 @@
-# Copyright (c) 2009 Red Hat, Inc.
-#
-# Authors: Andrew Beekhof
-#	   Steven Dake (sdake@redhat.com)
-#
-# This software licensed under BSD license, the text of which follows:
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-# - Redistributions of source code must retain the above copyright notice,
-#   this list of conditions and the following disclaimer.
-# - Redistributions in binary form must reproduce the above copyright notice,
-#   this list of conditions and the following disclaimer in the documentation
-#   and/or other materials provided with the distribution.
-# - Neither the name of the MontaVista Software, Inc. nor the names of its
-#   contributors may be used to endorse or promote products derived from this
-#   software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-# THE POSSIBILITY OF SUCH DAMAGE.
+sbin_PROGRAMS = \
+corosync-cfgtool \
+corosync-cmapctl \
+corosync-cpgtool \
+corosync-fplay \
+corosync-keygen \
+corosync-notifyd \
+corosync-quorumtool
 
-MAINTAINERCLEANFILES    = Makefile.in
-INCLUDES       		= -I$(top_builddir)/include  -I$(top_srcdir)/include \
-                          -I$(top_builddir)/include/corosync
+AM_LDFLAGS = -L$(top_builddir)/common_lib -L$(top_builddir)/lib
 
-sbin_PROGRAMS		= corosync-fplay corosync-cfgtool \
-			  corosync-keygen \
-			  corosync-cpgtool corosync-quorumtool \
-			  corosync-notifyd corosync-cmapctl
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/include \
+	-I$(top_builddir)/include
 
-bin_SCRIPTS		= corosync-blackbox
 
+# Automake will guess sources automatically
+
+dist_bin_SCRIPTS = corosync-blackbox
 if INSTALL_XMLCONF
-bin_SCRIPTS		+= corosync-xmlproc
-endif
-
+bin_SCRIPTS = corosync-xmlproc
 corosync-xmlproc: corosync-xmlproc.sh
-	sed -e 's#@''DATADIR@#${datadir}#g' $< > $@
+	$(SED) 's#@''DATADIR@#${datadir}#g' $< > $@
+endif
+EXTRA_DIST = \
+corosync-xmlproc.sh \
+corosync-notifyd.sysconfig.example
 
-EXTRA_DIST		= $(bin_SCRIPTS) corosync-xmlproc.sh corosync-notifyd.sysconfig.example
+corosync_cmapctl_LDFLAGS    = $(AM_LDFLAGS)
+corosync_cmapctl_LDADD      = -lcmap -lcorosync_common $(LIBQB_LIBS)
 
-COMMON_OPTS		= -L../lib -L../common_lib -Wl,-rpath,../common_lib
+corosync_fplay_LDADD        = $(LIBQB_LIBS)
 
-corosync_cmapctl_LDFLAGS= $(COMMON_OPTS)
-corosync_cmapctl_LDADD	= -lcorosync_common -lcmap $(LIBQB_LIBS)
+corosync_cfgtool_LDFLAGS    = $(AM_LDFLAGS)
+corosync_cfgtool_LDADD      = -lcfg #$(LIBQB_LIBS)
 
-corosync_fplay_LDADD	= $(LIBQB_LIBS)
+corosync_cpgtool_LDFLAGS    = $(AM_LDFLAGS)
+corosync_cpgtool_LDADD      = -lcpg -lcfg $(LIBQB_LIBS)
 
-corosync_cfgtool_LDFLAGS= $(COMMON_OPTS)
-corosync_cfgtool_LDADD	= -lcfg $(LIBQB_LIBS)
+corosync_quorumtool_LDFLAGS = $(AM_LDFLAGS)
+corosync_quorumtool_LDADD   = -lcmap -lcfg -lquorum -lcorosync_common -lvotequorum $(LIBQB_LIBS)
 
-corosync_cpgtool_LDFLAGS= $(COMMON_OPTS)
-corosync_cpgtool_LDADD	= -lcfg -lcpg $(LIBQB_LIBS)
+corosync_notifyd_CFLAGS     =
+corosync_notifyd_LDFLAGS    = $(AM_LDFLAGS)
+corosync_notifyd_LDADD      = $(LIBQB_LIBS) -lcfg -lcmap -lquorum
 
-corosync_quorumtool_LDFLAGS = $(COMMON_OPTS)
-corosync_quorumtool_LDADD   = -lcmap -lcfg -lquorum -lcorosync_common \
-			      -lvotequorum $(LIBQB_LIBS)
-
-corosync_notifyd_CPPFLAGS = $(DBUS_CFLAGS)
-corosync_notifyd_LDFLAGS  = $(COMMON_OPTS)
-corosync_notifyd_LDADD    = -lcfg -lcmap \
-			    $(LIBQB_LIBS) $(DBUS_LIBS) $(SNMPLIBS) \
-			    -lquorum
-
-lint:
-	-splint $(LINT_FLAGS) $(DBUS_CFLAGS) $(INCLUDES) $(CFLAGS) *.c
-
-clean-local:
-	rm -f corosync-xmlproc
+if ENABLE_DBUS
+corosync_notifyd_LDADD  += $(DBUS_LIBS) #$(SNMPLIBS)
+corosync_notifyd_CFLAGS += $(DBUS_CFLAGS)
+endif
+if ENABLE_SNMP
+corosync_notifyd_LDADD  += $(SNMPLIBS)
+endif
 

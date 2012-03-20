@@ -237,6 +237,7 @@ if test "x${enable_dbus}" = xyes; then
 	AC_DEFINE_UNQUOTED([HAVE_DBUS], 1, [have dbus])
 	PACKAGE_FEATURES="$PACKAGE_FEATURES dbus"
 fi
+AM_CONDITIONAL([ENABLE_DBUS], [test $enable_dbus = yes])
 
 if test "x${enable_testagents}" = xyes; then
 	AC_DEFINE_UNQUOTED([HAVE_TESTAGENTS], 1, [have testagents])
@@ -335,7 +336,7 @@ else
        enable_snmp=0
 fi
 AC_SUBST([SNMPLIBS])
-AM_CONDITIONAL(BUILD_SNMP, test "${enable_snmp}" = "1")
+AM_CONDITIONAL([ENABLE_SNMP], [test $enable_snmp = 1])
 
 
 
