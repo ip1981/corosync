@@ -5,10 +5,10 @@ SUBDIRS = \
 	exec \
 	tools \
 	conf \
-	pkgconfig
+	pkgconfig \
+	man
 #	test \\
 #	cts \
-#	man \
 #	init
 
 dist_doc_DATA = \
