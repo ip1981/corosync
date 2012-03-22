@@ -3,8 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: corosync
-Version: @LIBVERSION@
-Description: corosync
-Requires: libqb
+Name: cmap
+Version: @VERSION@
+Description: cmap
+Requires:
+Libs: -L${libdir} -lcmap
 Cflags: -I${includedir}

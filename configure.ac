@@ -92,20 +92,29 @@ AC_CHECK_FUNCS([alarm alphasort atexit bzero dup2 endgrent endpwent fcntl \
 		sched_get_priority_max sched_setscheduler getifaddrs])
 
 AC_CONFIG_FILES([Makefile
-		 exec/Makefile
-		 include/Makefile
-		 init/Makefile
-		 lib/Makefile
-		 common_lib/Makefile
-		 man/Makefile
-		 pkgconfig/Makefile
-		 test/Makefile
-		 cts/Makefile
-		 cts/agents/Makefile
-		 cts/CTSvars.py
-		 tools/Makefile
-		 conf/Makefile
-                 Doxyfile])
+    exec/Makefile
+    include/Makefile
+    init/Makefile
+    lib/Makefile
+    common_lib/Makefile
+    man/Makefile
+    pkgconfig/Makefile
+    test/Makefile
+    cts/Makefile
+    cts/agents/Makefile
+    cts/CTSvars.py
+    pkgconfig/corosync.pc
+    pkgconfig/libcfg.pc
+    pkgconfig/libcmap.pc
+    pkgconfig/libcorosync_common.pc
+    pkgconfig/libcpg.pc
+    pkgconfig/libquorum.pc
+    pkgconfig/libsam.pc
+    pkgconfig/libtotem_pg.pc
+    pkgconfig/libvotequorum.pc
+    tools/Makefile
+    conf/Makefile
+    Doxyfile])
 
 
 # local options

@@ -4,10 +4,10 @@ SUBDIRS = \
 	lib \
 	exec \
 	tools \
-	conf
+	conf \
+	pkgconfig
 #	test \\
 #	cts \
-#	pkgconfig \
 #	man \
 #	init
 

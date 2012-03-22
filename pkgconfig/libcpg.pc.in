@@ -3,8 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: corosync
-Version: @LIBVERSION@
-Description: corosync
-Requires: libqb
+Name: cpg
+Version: @VERSION@
+Description: cpg
+Requires:
+Libs: -L${libdir} -lcpg
 Cflags: -I${includedir}

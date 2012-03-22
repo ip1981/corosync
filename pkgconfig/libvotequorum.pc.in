@@ -3,8 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: corosync
-Version: @LIBVERSION@
-Description: corosync
-Requires: libqb
+Name: votequorum
+Version: @VERSION@
+Description: votequorum
+Requires:
+Libs: -L${libdir} -lvotequorum
 Cflags: -I${includedir}

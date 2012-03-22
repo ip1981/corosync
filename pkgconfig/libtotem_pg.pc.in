@@ -3,8 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: corosync
-Version: @LIBVERSION@
-Description: corosync
-Requires: libqb
+Name: totem_pg
+Version: @VERSION@
+Description: totem_pg
+Requires:
+Libs: -L${libdir} -ltotem_pg
 Cflags: -I${includedir}
