@@ -8,8 +8,7 @@ SUBDIRS = \
 	pkgconfig \
 	man \
 	test
-#	cts \
-#	init
+#	cts 
 
 dist_doc_DATA = \
 	README.recovery \

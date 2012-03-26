@@ -21,7 +21,7 @@ totempg.c \
 cs_queue.h \
 totemcrypto.c
 
-if BUILD_RDMA
+if ENABLE_RDMA
 libtotem_pg_la_SOURCES += totemiba.c
 endif
 

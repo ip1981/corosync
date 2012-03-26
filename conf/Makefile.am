@@ -13,7 +13,7 @@ corosysconf_DATA = \
 corosync.conf.example \
 corosync.conf.example.udpu
 
-if INSTALL_AUGEAS
+if ENABLE_AUGEAS
 corolensdir         = ${datadir}/augeas/lenses
 corolens_DATA       = lenses/corosync.aug
 
@@ -21,7 +21,7 @@ corolenstestdir     = ${corolensdir}/tests
 corolenstest_DATA   = lenses/tests/test_corosync.aug
 endif
 
-if INSTALL_XMLCONF
+if ENABLE_XMLCONF
 corosysxmlconfdir   = ${COROSYSCONFDIR}
 corosysxmlconf_DATA = corosync.xml.example
 
@@ -38,3 +38,4 @@ if ENABLE_DBUS
 dbusdir             = $(sysconfdir)/dbus-1/system.d
 dbus_DATA           = corosync-signals.conf
 endif
+

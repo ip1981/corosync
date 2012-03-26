@@ -36,7 +36,7 @@ AC_SEARCH_LIBS([pthread_create], [pthread])
 AC_SEARCH_LIBS([socket], [socket])
 AC_SEARCH_LIBS([sched_getscheduler], [rt])
 
-PKG_CHECK_MODULES([nss],[nss])
+PKG_CHECK_MODULES([nss], [nss])
 PKG_CHECK_MODULES([LIBQB], [libqb])
 
 AC_CHECK_LIB([qb], [qb_log_thread_priority_set], \
@@ -94,7 +94,6 @@ AC_CHECK_FUNCS([alarm alphasort atexit bzero dup2 endgrent endpwent fcntl \
 AC_CONFIG_FILES([Makefile
     exec/Makefile
     include/Makefile
-    init/Makefile
     lib/Makefile
     common_lib/Makefile
     man/Makefile
@@ -131,6 +130,10 @@ AC_ARG_ENABLE([dbus],
 	[  --enable-dbus                   : dbus events. ],,
 	[ enable_dbus="no" ])
 
+AC_ARG_ENABLE([snmp],
+    [  --enable-snmp                   : SNMP protocol support ],
+    [ default="no" ])
+
 AC_ARG_ENABLE([testagents],
 	[  --enable-testagents             : Install Test Agents. ],,
 	[ default="no" ])
@@ -138,7 +141,7 @@ AC_ARG_ENABLE([testagents],
 AC_ARG_ENABLE([rdma],
 	[  --enable-rdma                   : Infiniband RDMA transport support ],,
 	[ enable_rdma="no" ])
-AM_CONDITIONAL(BUILD_RDMA, test x$enable_rdma = xyes)
+AM_CONDITIONAL(ENABLE_RDMA, test x$enable_rdma = xyes)
 
 AC_ARG_ENABLE([monitoring],
 	[  --enable-monitoring             : resource monitoring ],,
@@ -148,31 +151,17 @@ AM_CONDITIONAL(BUILD_MONITORING, test x$enable_monitoring = xyes)
 AC_ARG_ENABLE([watchdog],
 	[  --enable-watchdog               : Watchdog support ],,
 	[ default="no" ])
-AM_CONDITIONAL(BUILD_WATCHDOG, test x$enable_watchdog = xyes)
+AM_CONDITIONAL(ENABLE_WATCHDOG, test x$enable_watchdog = xyes)
 
 AC_ARG_ENABLE([augeas],
 	[  --enable-augeas                 : Install the augeas lens for corosync.conf ],,
 	[ enable_augeas="no" ])
-AM_CONDITIONAL(INSTALL_AUGEAS, test x$enable_augeas = xyes)
-
-AC_ARG_ENABLE([systemd],
-	      [  --enable-systemd                : Install systemd service files],,
-	[ enable_systemd="no" ])
-AM_CONDITIONAL(INSTALL_SYSTEMD, test x$enable_systemd = xyes)
-
-AC_ARG_WITH([initddir],
-	[  --with-initddir=DIR     : path to init script directory. ],
-	[ INITDDIR="$withval" ],
-	[ INITDDIR="$sysconfdir/init.d" ])
-
-AC_ARG_ENABLE([snmp],
-       [  --enable-snmp                   : SNMP protocol support ],
-       [ default="no" ])
+AM_CONDITIONAL(ENABLE_AUGEAS, test x$enable_augeas = xyes)
 
 AC_ARG_ENABLE([xmlconf],
        [  --enable-xmlconf                : XML configuration support ],,
        [ enable_xmlconf="no" ])
-AM_CONDITIONAL(INSTALL_XMLCONF, test x$enable_xmlconf = xyes)
+AM_CONDITIONAL(ENABLE_XMLCONF, test x$enable_xmlconf = xyes)
 
 # OS detection
 # THIS SECTION MUST DIE!
