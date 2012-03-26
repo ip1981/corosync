@@ -133,7 +133,7 @@ dist_man_MANS 		= corosync.conf.5 \
 			  sam_overview.8 \
 			  cmap_overview.8
 
-if INSTALL_XMLCONF
+if ENABLE_XMLCONF
 dist_man_MANS		+= $(xml_man)
 endif
 

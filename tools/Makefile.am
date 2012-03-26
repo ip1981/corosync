@@ -17,7 +17,7 @@ AM_CPPFLAGS = \
 # Automake will guess sources automatically
 
 dist_bin_SCRIPTS = corosync-blackbox
-if INSTALL_XMLCONF
+if ENABLE_XMLCONF
 bin_SCRIPTS = corosync-xmlproc
 corosync-xmlproc: corosync-xmlproc.sh
 	$(SED) 's#@''DATADIR@#${datadir}#g' $< > $@
