@@ -27,10 +27,9 @@ libvotequorum_la_LIBADD  = $(LIBQB_LIBS) -lcorosync_common
 libvotequorum_la_SOURCES = votequorum.c util.h libvotequorum.versions
 libvotequorum_la_LDFLAGS = $(AM_LDFLAGS) -version-info 5:0:0
 
-libsam_la_LIBADD         = $(LIBQB_LIBS) -lcorosync_common -lcmap -lquorum
+libsam_la_LIBADD         = $(LIBQB_LIBS) -lcorosync_common libcmap.la libquorum.la
 libsam_la_SOURCES        = sam.c util.h libsam.versions
-libsam_la_DEPENDENCIES   = libcmap.la libquorum.la
-libsam_la_LDFLAGS        = -L$(builddir) $(AM_LDFLAGS) -version-info 8:0:4
+libsam_la_LDFLAGS        = $(AM_LDFLAGS) -version-info 8:0:4
 
 
 if GNULD

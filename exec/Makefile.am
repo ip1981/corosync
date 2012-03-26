@@ -26,10 +26,9 @@ libtotem_pg_la_SOURCES += totemiba.c
 endif
 
 
-corosync_CFLAGS = $(nss_CFLAGS)
-corosync_DEPENDENCIES = libtotem_pg.la
-corosync_LDFLAGS      = -L$(builddir) -L$(top_builddir)/common_lib
-corosync_LDADD        = -ltotem_pg -lcorosync_common
+corosync_CFLAGS  = $(nss_CFLAGS)
+corosync_LDFLAGS = -L$(top_builddir)/common_lib
+corosync_LDADD   = libtotem_pg.la -lcorosync_common
 corosync_SOURCES = \
 apidef.c \
 cfg.c \
