@@ -22,7 +22,7 @@ libcmap_la_SOURCES       = cmap.c util.h libcmap.versions
 libcmap_la_LDFLAGS       = $(AM_LDFLAGS) -version-info 5:0:1
 
 libcpg_la_LIBADD         = $(LIBQB_LIBS) -lcorosync_common
-libcpg_la_SOURCES        = cpg.c util.h libcmap.versions
+libcpg_la_SOURCES        = cpg.c util.h libcpg.versions
 libcpg_la_LDFLAGS        = $(AM_LDFLAGS) -version-info 5:0:1
 
 libquorum_la_LIBADD      = $(LIBQB_LIBS) -lcorosync_common
