@@ -111,7 +111,8 @@ autogen_common		= ipc_common.sh.errors
 EXTRA_DIST		= $(INDEX_HTML) \
 			  $(xml_man) \
 			  $(autogen_man:%=%.in) \
-			  $(autogen_common)
+			  $(autogen_common) \
+			  genman
 
 man_MANS		= $(autogen_man)
 
@@ -140,11 +141,11 @@ endif
 HTML_DOCS 		= $(dist_man_MANS:%=%.html) $(man_MANS:%=%.html)
 
 # developer man page generation
-%.3: %.3.in $(autogen_common) $(top_srcdir)/build-aux/genman
+%.3: %.3.in $(autogen_common) genman
 	@echo Generating $@ man page && \
 	rm -f $@-t $@ && \
-	$(top_srcdir)/build-aux/genman \
-		$(srcdir)/$@.in \
+	$(srcdir)/genman \
+		$< \
 		$(builddir)/$@-t \
 		$(srcdir)/$(autogen_common) && \
 	mv $@-t $@
