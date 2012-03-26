@@ -6,8 +6,8 @@ SUBDIRS = \
 	tools \
 	conf \
 	pkgconfig \
-	man
-#	test \\
+	man \
+	test
 #	cts \
 #	init
 
