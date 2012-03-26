@@ -137,6 +137,7 @@ AC_ARG_ENABLE([snmp],
 AC_ARG_ENABLE([testagents],
 	[  --enable-testagents             : Install Test Agents. ],,
 	[ default="no" ])
+AM_CONDITIONAL(ENABLE_TESTAGENTS, test $enable_testagents = yes)
 
 AC_ARG_ENABLE([rdma],
 	[  --enable-rdma                   : Infiniband RDMA transport support ],,
@@ -346,7 +347,6 @@ fi
 # substitute what we need:
 AC_SUBST([INITDDIR])
 
-AM_CONDITIONAL(INSTALL_TESTAGENTS, test -n "${enable_testagents}")
 AM_CONDITIONAL(AUGTOOL, test -n "${AUGTOOL}")
 AC_SUBST([NSS_LDFLAGS])
 
