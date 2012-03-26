@@ -1,8 +1,6 @@
 AC_PREREQ([2.61])
 
-AC_INIT([corosync],
-	m4_esyscmd([build-aux/git-version-gen .tarball-version]),
-	[discuss@lists.corosync.org])
+AC_INIT([corosync], [1.99.8], [discuss@lists.corosync.org])
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
@@ -11,6 +9,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
 AM_SILENT_RULES
 AC_PROG_CC
+AM_PROG_CC_C_O
 LT_INIT()
 
 AC_CONFIG_SRCDIR([lib/cpg.c])
