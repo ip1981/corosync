@@ -137,7 +137,7 @@ AC_ARG_ENABLE([snmp],
 AC_ARG_ENABLE([testagents],
 	[  --enable-testagents             : Install Test Agents. ],,
 	[ default="no" ])
-AM_CONDITIONAL(ENABLE_TESTAGENTS, test $enable_testagents = yes)
+AM_CONDITIONAL(ENABLE_TESTAGENTS, test x$enable_testagents = xyes)
 
 AC_ARG_ENABLE([rdma],
 	[  --enable-rdma                   : Infiniband RDMA transport support ],,
