@@ -1,4 +1,10 @@
-lib_LTLIBRARIES = libcpg.la libquorum.la libcfg.la libvotequorum.la libsam.la libcmap.la
+lib_LTLIBRARIES = \
+libcfg.la \
+libcmap.la \
+libcpg.la \
+libquorum.la \
+libvotequorum.la \
+libsam.la
 
 AM_CPPFLAGS = \
 	-I$(top_builddir)/include \
