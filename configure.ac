@@ -38,12 +38,16 @@ AC_SEARCH_LIBS([sched_getscheduler], [rt])
 PKG_CHECK_MODULES([nss], [nss])
 PKG_CHECK_MODULES([LIBQB], [libqb])
 
+dnl What if libqb is in a strange place?
+save_LDFLAGS="$LDFLAGS"
+LDFLAGS="$LDFLAGS $LIBQB_LIBS"
 AC_CHECK_LIB([qb], [qb_log_thread_priority_set], \
 	     have_qb_log_thread_priority_set="yes", \
 	     have_qb_log_thread_priority_set="no")
 if test "x${have_qb_log_thread_priority_set}" = xyes; then
 	AC_DEFINE_UNQUOTED([HAVE_QB_LOG_THREAD_PRIORITY_SET], 1, [have qb_log_thread_priority_set])
 fi
+LDFLAGS="$save_LDFLAGS"
 
 # Checks for header files.
 AC_FUNC_ALLOCA
