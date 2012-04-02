@@ -5,6 +5,10 @@ AC_INIT([corosync], [1.99.8], [discuss@lists.corosync.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
+dnl Need _POSIX_THREAD_SEMANTICS on Illumos/Solaris
+dnl for getgrnam_r or readdir_r
+AC_USE_SYSTEM_EXTENSIONS
+
 AM_INIT_AUTOMAKE([foreign])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES])
 
