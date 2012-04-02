@@ -10,7 +10,7 @@ AM_INIT_AUTOMAKE
 AM_SILENT_RULES
 AC_PROG_CC
 AM_PROG_CC_C_O
-LT_INIT()
+LT_INIT
 
 AC_CONFIG_SRCDIR([lib/cpg.c])
 AC_CONFIG_HEADER([include/corosync/config.h])
@@ -220,13 +220,6 @@ ENV_LDFLAGS="$LDFLAGS"
 if test "x${enable_debug}" = xyes; then
 	AC_DEFINE_UNQUOTED([DEBUG], [1], [Compiling Debugging code])
 	PACKAGE_FEATURES="$PACKAGE_FEATURES debug"
-fi
-
-# gdb flags
-if test "x${GCC}" = xyes; then
-	GDB_FLAGS="-ggdb3"
-else
-	GDB_FLAGS="-g"
 fi
 
 # Look for dbus-1
