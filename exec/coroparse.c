@@ -60,6 +60,11 @@
 #include <corosync/logsys.h>
 #include <corosync/icmap.h>
 
+#ifndef NAME_MAX
+/* Some random value :-P */
+#define NAME_MAX 255
+#endif
+
 #include "main.h"
 #include "util.h"
 
