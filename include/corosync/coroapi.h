@@ -35,9 +35,7 @@
 #define COROAPI_H_DEFINED
 
 #include <stdio.h>
-#ifdef COROSYNC_BSD
 #include <sys/uio.h>
-#endif
 #include <corosync/hdb.h>
 #include <qb/qbloop.h>
 #include <corosync/swab.h>
