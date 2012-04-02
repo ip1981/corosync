@@ -5,9 +5,9 @@ AC_INIT([corosync], [1.99.8], [discuss@lists.corosync.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
+AM_INIT_AUTOMAKE([foreign])
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES])
 
-AM_INIT_AUTOMAKE
-AM_SILENT_RULES
 AC_PROG_CC
 AM_PROG_CC_C_O
 LT_INIT
