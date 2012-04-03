@@ -285,14 +285,9 @@ static inline void ucast_sendmsg (
 	msg_ucast.msg_namelen = addrlen;
 	msg_ucast.msg_iov = (void *)&iovec;
 	msg_ucast.msg_iovlen = 1;
-#if !defined(COROSYNC_SOLARIS)
 	msg_ucast.msg_control = 0;
 	msg_ucast.msg_controllen = 0;
 	msg_ucast.msg_flags = 0;
-#else
-	msg_ucast.msg_accrights = NULL;
-	msg_ucast.msg_accrightslen = 0;
-#endif
 
 
 	/*
@@ -345,14 +340,9 @@ static inline void mcast_sendmsg (
 	msg_mcast.msg_namelen = addrlen;
 	msg_mcast.msg_iov = (void *)&iovec;
 	msg_mcast.msg_iovlen = 1;
-#if !defined(COROSYNC_SOLARIS)
 	msg_mcast.msg_control = 0;
 	msg_mcast.msg_controllen = 0;
 	msg_mcast.msg_flags = 0;
-#else
-	msg_mcast.msg_accrights = NULL;
-	msg_mcast.msg_accrightslen = 0;
-#endif
 
 	/*
 	 * Transmit multicast message
@@ -420,14 +410,9 @@ static int net_deliver_fn (
 	msg_recv.msg_namelen = sizeof (struct sockaddr_storage);
 	msg_recv.msg_iov = iovec;
 	msg_recv.msg_iovlen = 1;
-#if !defined(COROSYNC_SOLARIS)
 	msg_recv.msg_control = 0;
 	msg_recv.msg_controllen = 0;
 	msg_recv.msg_flags = 0;
-#else
-	msg_recv.msg_accrights = NULL;
-	msg_recv.msg_accrightslen = 0;
-#endif
 
 	bytes_received = recvmsg (fd, &msg_recv, MSG_NOSIGNAL | MSG_DONTWAIT);
 	if (bytes_received == -1) {
@@ -1232,14 +1217,9 @@ extern int totemudp_recv_mcast_empty (
 	msg_recv.msg_namelen = sizeof (struct sockaddr_storage);
 	msg_recv.msg_iov = &instance->totemudp_iov_recv_flush;
 	msg_recv.msg_iovlen = 1;
-#if !defined(COROSYNC_SOLARIS)
 	msg_recv.msg_control = 0;
 	msg_recv.msg_controllen = 0;
 	msg_recv.msg_flags = 0;
-#else
-	msg_recv.msg_accrights = NULL;
-	msg_recv.msg_accrightslen = 0;
-#endif
 
 	do {
 		ufd.fd = instance->totemudp_sockets.mcast_recv;
