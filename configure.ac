@@ -251,20 +251,10 @@ if test "x${enable_rdma}" = xyes; then
 fi
 
 if test "x${enable_monitoring}" = xyes; then
-
-	AC_CHECK_LIB([statgrab], [sg_get_mem_stats], have_libstatgrab="yes", have_libstatgrab="no")
-
-	if test "x${have_libstatgrab}" = xyes; then
-		AC_DEFINE_UNQUOTED([HAVE_LIBSTATGRAB], 1, [have libstatgrab])
-		statgrab_LIBS="-lstatgrab"
-	else
-		if test "x${have_linux}" = xno; then
-			AC_MSG_ERROR(monitoring requires libstatgrab on non-linux systems)
-		fi
-	fi
-	AC_SUBST([statgrab_LIBS])
-	AC_DEFINE_UNQUOTED([HAVE_MONITORING], 1, [have resource monitoring])
-	PACKAGE_FEATURES="$PACKAGE_FEATURES monitoring"
+    if test "x${have_linux}" = xno; then
+        PKG_CHECK_MODULES([LIBSTATGRAB], [libstatgrab >= 0.9])
+    fi
+    PACKAGE_FEATURES="$PACKAGE_FEATURES monitoring"
 fi
 
 if test "x${enable_watchdog}" = xyes; then
