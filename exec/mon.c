@@ -355,7 +355,7 @@ static void mem_update_stats_fn (void *data)
 
 static double min15_loadavg_get(void)
 {
-#if defined(HAVE_LIBSTATGRAB)
+#if defined(WITH_LIBSTATGRAB)
 	sg_load_stats *load_stats;
 	load_stats = sg_get_load_stats ();
 	if (load_stats == NULL) {
@@ -374,7 +374,7 @@ static double min15_loadavg_get(void)
 #else
 #error need libstatgrab or linux.
 #endif /* COROSYNC_LINUX */
-#endif /* HAVE_LIBSTATGRAB */
+#endif /* WITH_LIBSTATGRAB */
 }
 
 static void load_update_stats_fn (void *data)
@@ -484,9 +484,9 @@ static void mon_instance_init (struct resource_instance* inst)
 static char *mon_exec_init_fn (struct corosync_api_v1 *corosync_api)
 {
 
-#ifdef HAVE_LIBSTATGRAB
+#ifdef WITH_LIBSTATGRAB
 	sg_init();
-#endif /* HAVE_LIBSTATGRAB */
+#endif /* WITH_LIBSTATGRAB */
 
 #ifdef COROSYNC_SOLARIS
 	logsys_subsys_init();
