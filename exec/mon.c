@@ -35,7 +35,7 @@
 #include <config.h>
 
 #include <unistd.h>
-#if defined(HAVE_LIBSTATGRAB)
+#ifdef WITH_LIBSTATGRAB
 #include <statgrab.h>
 #endif
 
@@ -274,7 +274,7 @@ void mon_resource_failed (struct cs_fsm* fsm, int32_t event, void * data)
 
 static int32_t percent_mem_used_get(void)
 {
-#if defined(HAVE_LIBSTATGRAB)
+#ifdef WITH_LIBSTATGRAB
 	sg_mem_stats *mem_stats;
 	sg_swap_stats *swap_stats;
 	long long total, freemem;
@@ -290,8 +290,7 @@ static int32_t percent_mem_used_get(void)
 	total = mem_stats->total + swap_stats->total;
 	freemem = mem_stats->free + swap_stats->free;
 	return ((total - freemem) * 100) / total;
-#else
-#if defined(COROSYNC_LINUX)
+#elif __linux__
 	char *line_ptr;
 	char line[512];
 	unsigned long long value;
@@ -324,8 +323,8 @@ static int32_t percent_mem_used_get(void)
 	return ((total - freemem) * 100) / total;
 #else
 #error need libstatgrab or linux.
-#endif /* COROSYNC_LINUX */
-#endif /* HAVE_LIBSTATGRAB */
+#endif /* __linux__ */
+#endif /* WITH_LIBSTATGRAB */
 }
 
 

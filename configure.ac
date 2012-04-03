@@ -171,58 +171,22 @@ AC_ARG_ENABLE([xmlconf],
        [ enable_xmlconf="no" ])
 AM_CONDITIONAL(ENABLE_XMLCONF, test x$enable_xmlconf = xyes)
 
-# OS detection
-# THIS SECTION MUST DIE!
-have_linux=no
-case "$host_os" in
-	*linux*)
-        have_linux=yes
-		AC_DEFINE_UNQUOTED([COROSYNC_LINUX], [1],
-				   [Compiling for Linux platform])
-	;;
-	darwin*)
-		AC_DEFINE_UNQUOTED([COROSYNC_DARWIN], [1],
-				   [Compiling for Darwin platform])
-		AC_DEFINE_UNQUOTED([MAP_ANONYMOUS], [MAP_ANON],
-				   [Shared memory define for Darwin platform])
-		AC_DEFINE_UNQUOTED([PATH_MAX], [4096],
-				   [Number of chars in a path name including nul])
-		AC_DEFINE_UNQUOTED([NAME_MAX], [255],
-				   [Number of chars in a file name])
-	;;
-	*bsd*)
-		AC_DEFINE_UNQUOTED([COROSYNC_BSD], [1],
-				   [Compiling for BSD platform])
-		AC_DEFINE_UNQUOTED([MAP_ANONYMOUS], [MAP_ANON],
-				   [Shared memory define for Darwin platform])
-		case "$host_os" in
-			*freebsd[[234567]]*)
-			;;
-			*freebsd*)
-				AC_DEFINE_UNQUOTED([COROSYNC_FREEBSD_GE_8], [1],
-					   [Compiling for FreeBSD >= 8 platform])
-			;;
-		esac
-	;;
-	*solaris*)
-		AC_DEFINE_UNQUOTED([COROSYNC_SOLARIS], [1],
-				   [Compiling for Solaris platform])
-		AC_DEFINE_UNQUOTED([TS_CLASS], [1],
-				   [Prevent being scheduled RR])
-		AC_DEFINE_UNQUOTED([_SEM_SEMUN_UNDEFINED], [1],
-				   [The semun structure is undefined])
-	;;
-	*)
-		AC_MSG_ERROR([Unsupported OS? hmmmm])
-	;;
-esac
+AC_ARG_WITH([libstatgrab],
+            AC_HELP_STRING([--with-libstatgrab], [use libstatgrab for monitoring. \
+                            Default is "no" on Linux and "yes" on other systems]),
+            [with_libstatgrab=$withval],
+            [with_libstatgrab=no]
+            )
 
-AC_SUBST(CP)
-# *FLAGS handling goes here
-
-ENV_CFLAGS="$CFLAGS"
-ENV_CPPFLAGS="$CPPFLAGS"
-ENV_LDFLAGS="$LDFLAGS"
+if test "x${enable_monitoring}" = xyes; then
+    PACKAGE_FEATURES="$PACKAGE_FEATURES monitoring"
+    case "$host_os:$with_libstatgrab" in
+        *linux*:no) ;;
+        *)
+            PKG_CHECK_MODULES([LIBSTATGRAB], [libstatgrab >= 0.9])
+            AC_DEFINE([WITH_LIBSTATGRAB], [1], [Define to 1 if using libstatgrab])
+    esac
+fi
 
 # debug build stuff
 if test "x${enable_debug}" = xyes; then
@@ -248,13 +212,6 @@ if test "x${enable_rdma}" = xyes; then
 	PKG_CHECK_MODULES([ibverbs],[ibverbs])
 	AC_DEFINE_UNQUOTED([HAVE_RDMA], 1, [have rdmacm])
 	PACKAGE_FEATURES="$PACKAGE_FEATURES rdma"
-fi
-
-if test "x${enable_monitoring}" = xyes; then
-    if test "x${have_linux}" = xno; then
-        PKG_CHECK_MODULES([LIBSTATGRAB], [libstatgrab >= 0.9])
-    fi
-    PACKAGE_FEATURES="$PACKAGE_FEATURES monitoring"
 fi
 
 if test "x${enable_watchdog}" = xyes; then
