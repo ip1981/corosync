@@ -181,7 +181,6 @@ static void logsys_system_init (void)					\
 __attribute__ ((constructor))						\
 static void logsys_subsys_init (void)					\
 {									\
-	assert(__start___verbose != __stop___verbose);			\
 	logsys_subsys_id =						\
 		_logsys_subsys_create ((subsys), __FILE__);		\
 	if (logsys_subsys_id == -1) {					\
