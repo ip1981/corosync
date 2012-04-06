@@ -363,8 +363,7 @@ static double min15_loadavg_get(void)
 		return -1;
 	}
 	return load_stats->min15;
-#else
-#if defined(COROSYNC_LINUX)
+#elif __linux__
 	double loadav[3];
 	if (getloadavg(loadav,3) < 0) {
 		return -1;
@@ -372,7 +371,6 @@ static double min15_loadavg_get(void)
 	return loadav[2];
 #else
 #error need libstatgrab or linux.
-#endif /* COROSYNC_LINUX */
 #endif /* WITH_LIBSTATGRAB */
 }
 
