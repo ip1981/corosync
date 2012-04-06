@@ -675,9 +675,6 @@ static char *wd_exec_init_fn (struct corosync_api_v1 *corosync_api)
 {
 
 	ENTER();
-#ifdef __sun__
-	logsys_subsys_init();
-#endif
 	api = corosync_api;
 
 	watchdog_timeout_get_initial();
