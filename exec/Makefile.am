@@ -51,8 +51,11 @@ totemconfig.c \
 util.c \
 votequorum.c \
 vsf_quorum.c \
-vsf_ykd.c \
-wd.c
+vsf_ykd.c
+
+if ENABLE_WATCHDOG
+corosync_SOURCES += wd.c
+endif
 
 noinst_HEADERS		= apidef.h mainconfig.h main.h \
 			  quorum.h service.h timer.h totemconfig.h \
