@@ -282,7 +282,7 @@ static int32_t percent_mem_used_get(void)
 	mem_stats = sg_get_mem_stats();
 	swap_stats = sg_get_swap_stats();
 
-	if (mem_stats == NULL || swap_stats != NULL) {
+	if (mem_stats == NULL || swap_stats == NULL) {
 		log_printf (LOGSYS_LEVEL_ERROR, "Unable to get memory stats: %s",
 			sg_str_error(sg_get_error()));
 		return -1;
