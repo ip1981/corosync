@@ -206,7 +206,7 @@ if test "x${enable_monitoring}" = xyes; then
     case "$host_os:$with_libstatgrab" in
         *linux*:no) ;;
         *)
-            PKG_CHECK_MODULES([LIBSTATGRAB], [libstatgrab >= 0.9])
+            PKG_CHECK_MODULES([LIBSTATGRAB], [libstatgrab >= 0.17])
             AC_DEFINE([WITH_LIBSTATGRAB], [1], [Define to 1 if using libstatgrab])
     esac
 fi
