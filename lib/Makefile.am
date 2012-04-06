@@ -46,12 +46,4 @@ libquorum_la_LDFLAGS     += -Wl,--version-script=$(srcdir)/libquorum.versions
 libsam_la_LDFLAGS        += -Wl,--version-script=$(srcdir)/libsam.versions
 libvotequorum_la_LDFLAGS += -Wl,--version-script=$(srcdir)/libvotequorum.versions
 endif
-if SUNLD
-libcfg_la_LDFLAGS        += -Wl,-M -Wl,$(srcdir)/libcfg.versions
-libcmap_la_LDFLAGS       += -Wl,-M -Wl,$(srcdir)/libcmap.versions
-libcpg_la_LDFLAGS        += -Wl,-M -Wl,$(srcdir)/libcpg.versions
-libquorum_la_LDFLAGS     += -Wl,-M -Wl,$(srcdir)/libquorum.versions
-libsam_la_LDFLAGS        += -Wl,-M -Wl,$(srcdir)/libsam.versions
-libvotequorum_la_LDFLAGS += -Wl,-M -Wl,$(srcdir)/libvotequorum.versions
-endif
 
