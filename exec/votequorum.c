@@ -1711,10 +1711,6 @@ static char *votequorum_exec_init_fn (struct corosync_api_v1 *api)
 {
 	char *error = NULL;
 
-#ifdef COROSYNC_SOLARIS
-	logsys_subsys_init();
-#endif
-
 	ENTER();
 
 	list_init(&cluster_members_list);
