@@ -323,7 +323,6 @@ static int32_t percent_mem_used_get(void)
 	return ((total - freemem) * 100) / total;
 #else
 #error need libstatgrab or linux.
-#endif /* __linux__ */
 #endif /* WITH_LIBSTATGRAB */
 }
 
@@ -488,7 +487,7 @@ static char *mon_exec_init_fn (struct corosync_api_v1 *corosync_api)
 	sg_init();
 #endif /* WITH_LIBSTATGRAB */
 
-#ifdef COROSYNC_SOLARIS
+#ifdef __sun
 	logsys_subsys_init();
 #endif
 	api = corosync_api;
