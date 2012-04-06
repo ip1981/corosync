@@ -61,7 +61,7 @@ struct quorum_inst {
 	quorum_callbacks_t callbacks;
 };
 
-DECLARE_HDB_DATABASE(quorum_handle_t_db,NULL);
+DECLARE_HDB_DATABASE(quorum_handle_t_db,NULL)
 
 cs_error_t quorum_initialize (
 	quorum_handle_t *handle,

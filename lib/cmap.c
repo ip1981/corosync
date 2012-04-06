@@ -65,8 +65,8 @@ struct cmap_track_inst {
 	cmap_track_handle_t track_handle;
 };
 
-DECLARE_HDB_DATABASE(cmap_handle_t_db,NULL);
-DECLARE_HDB_DATABASE(cmap_track_handle_t_db,NULL);
+DECLARE_HDB_DATABASE(cmap_handle_t_db,NULL)
+DECLARE_HDB_DATABASE(cmap_track_handle_t_db,NULL)
 
 /*
  * Function prototypes

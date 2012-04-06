@@ -72,7 +72,7 @@ struct cfg_inst {
 /*
  * All instances in one database
  */
-DECLARE_HDB_DATABASE (cfg_hdb,NULL);
+DECLARE_HDB_DATABASE (cfg_hdb,NULL)
 
 /*
  * Implementation

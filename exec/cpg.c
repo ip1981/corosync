@@ -163,7 +163,7 @@ struct cpg_iteration_instance {
 	struct list_head *current_pointer;
 };
 
-DECLARE_HDB_DATABASE(cpg_iteration_handle_t_db,NULL);
+DECLARE_HDB_DATABASE(cpg_iteration_handle_t_db,NULL)
 
 DECLARE_LIST_INIT(cpg_pd_list_head);
 
