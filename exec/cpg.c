@@ -864,7 +864,7 @@ static void downlist_messages_delete (void)
 
 static char *cpg_exec_init_fn (struct corosync_api_v1 *corosync_api)
 {
-#ifdef COROSYNC_SOLARIS
+#ifdef __sun__
 	logsys_subsys_init();
 #endif
 	list_init (&downlist_messages_head);

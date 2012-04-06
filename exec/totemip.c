@@ -43,18 +43,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#if defined(COROSYNC_SOLARIS)
 #include <net/if.h>
-#include <sys/sockio.h>
-#endif
-#if defined(COROSYNC_BSD) || defined(COROSYNC_DARWIN)
-#include <sys/sockio.h>
-#include <net/if.h>
-#include <net/if_var.h>
-#include <netinet/in_var.h>
-#include <netinet/in.h>
-#include <ifaddrs.h>
-#endif
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
@@ -62,13 +51,22 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#if defined(COROSYNC_LINUX)
-#include <net/if.h>
+#if HAVE_SYS_SOCKIO_H
+#include <sys/sockio.h>
+#endif
+#if HAVE_NET_IF_VAR_H
+#include <net/if_var.h>
+#endif
+#if HAVE_NETINET_IN_VAR_H
+#include <netinet/in_var.h>
+#endif
+#if HAVE_ASM_TYPES_H
 #include <asm/types.h>
+#endif
+#if HAVE_LINUX_RTNETLINK_H
 #include <linux/rtnetlink.h>
 #endif
-
-#ifdef HAVE_GETIFADDRS
+#if HAVE_IFADDRS_H
 #include <ifaddrs.h>
 #endif
 

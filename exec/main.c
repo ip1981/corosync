@@ -413,10 +413,12 @@ static void corosync_mlockall (void)
 
 	rlimit.rlim_cur = RLIM_INFINITY;
 	rlimit.rlim_max = RLIM_INFINITY;
-#ifndef COROSYNC_SOLARIS
+#if defined(RLIMIT_MEMLOCK)
 	setrlimit (RLIMIT_MEMLOCK, &rlimit);
-#else
+#elif defined(RLIMIT_VMEM)
 	setrlimit (RLIMIT_VMEM, &rlimit);
+#else
+#error No suitable RLIMIT ?
 #endif
 
 #if defined(COROSYNC_BSD) && !defined(COROSYNC_FREEBSD_GE_8)

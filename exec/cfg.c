@@ -246,7 +246,7 @@ struct req_exec_cfg_shutdown {
 static char *cfg_exec_init_fn (
 	struct corosync_api_v1 *corosync_api_v1)
 {
-#ifdef COROSYNC_SOLARIS
+#ifdef __sun__
 	logsys_subsys_init();
 #endif
 

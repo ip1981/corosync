@@ -58,10 +58,33 @@ AC_FUNC_ALLOCA
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h netdb.h netinet/in.h stdint.h \
-		  stdlib.h string.h sys/ioctl.h sys/param.h sys/socket.h \
-		  sys/time.h syslog.h unistd.h sys/types.h getopt.h malloc.h \
-		  sys/sockio.h utmpx.h ifaddrs.h])
+AC_CHECK_HEADERS([ \
+arpa/inet.h \
+asm/types.h \
+fcntl.h \
+getopt.h \
+ifaddrs.h \
+limits.h \
+linux/rtnetlink.h \
+malloc.h \
+net/if.h \
+net/if_var.h \
+netdb.h \
+netinet/in.h \
+netinet/in_var.h \
+sys/ioctl.h \
+sys/param.h \
+sys/socket.h \
+sys/sockio.h \
+sys/time.h \
+syslog.h \
+utmpx.h \
+], [], [],
+[
+#ifdef HAVE_NET_IF_H
+# include <net/if.h>
+#endif
+])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST

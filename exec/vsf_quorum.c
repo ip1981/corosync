@@ -257,7 +257,7 @@ static char *quorum_exec_init_fn (struct corosync_api_v1 *api)
 	char *quorum_module = NULL;
 	char *error;
 
-#ifdef COROSYNC_SOLARIS
+#ifdef __sun__
 	logsys_subsys_init();
 #endif
 	corosync_api = api;
